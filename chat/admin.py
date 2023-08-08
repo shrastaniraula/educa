@@ -3,7 +3,7 @@ from .models import Message
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ['room', 'user', 'created', 'message']
+    list_display = ['room', 'user', 'created', 'message', 'image']
     list_filter = ['room', 'user']
     search_fields = ['room', 'message']
 

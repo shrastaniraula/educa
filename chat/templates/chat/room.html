@@ -6,6 +6,11 @@
 </div>
 <div id="chat-input">
     <input id="chat-message-input" type="text">
+
+    <!-- adding image -->
+    <input id="chat-image-input" type="file">
+    <!-- adding image -->
+
     <input id="chat-message-submit" type="submit" value="Send">
 </div>
 {% endblock %}
@@ -35,10 +40,21 @@ const isMe = data.user === requestUser;
 const source = isMe ? 'me' : 'other';
 const name = isMe ? 'Me' : data.user;
 
+if(data.type === 'chat_message'){
 chat.innerHTML += '<div class="message ' + source + '">' +
     '<strong>' + name + '</strong> ' +
     '<span class="date">' + datetime + '</span><br>' +
     data.message + '</div>';
+}
+else if(data.type === 'image'){
+const imageElement = new Image();
+imageElement.src = data.message; // Set the Data URL as the source
+imageElement.alt = 'Received Image';
+imageElement.classList.add('chat-image', source, "message");
+
+chat.appendChild(imageElement);
+}
+
 chat.scrollTop = chat.scrollHeight;
 };
 chatSocket.onclose = function(event) {
@@ -47,18 +63,50 @@ console.error('Chat socket closed unexpectedly');
 
 
 const input = document.getElementById('chat-message-input');
+
+<!-- image add -->
+const imageInput = document.getElementById('chat-image-input');
+<!-- image add  -->
+
 const submitButton = document.getElementById('chat-message-submit');
 
-submitButton.addEventListener('click', function(event) {
+submitButton.addEventListener('click', function(event){
 const message = input.value;
+
 if(message) {
+
+console.log("messageee");
 // send message in JSON format
-chatSocket.send(JSON.stringify({'message': message}));
+chatSocket.send(JSON.stringify({'type': 'text','message': message}));
 // clear input
-input.innerHTML = '';
+<!-- changing from input.innerHTML to input.value -->
+input.value = '';
 input.focus();
+
+<!-- for image addition  -->
+}else if (imageInput.files.length > 0) {
+
+const imageFile = imageInput.files[0];
+
+var reader = new FileReader();
+reader.onload = function(event) {
+const imageData = event.target.result;
+
+
+chatSocket.send(JSON.stringify({
+'type': 'image',
+'message': imageData
+}));
+
+};
+
+// Start reading the image file
+reader.readAsDataURL(imageFile);
+
+imageInput.value = '';
 }
 });
+
 
 input.addEventListener('keypress', function(event) {
 if (event.key === 'Enter') {

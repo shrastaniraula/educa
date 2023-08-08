@@ -309,6 +309,11 @@ ul#course-modules li:hover {
     padding-top:20px;
 }
 
+.chat-image{
+    max-width: 200px; /* Set your preferred maximum width */
+    max-height: 500px; /* Set your preferred maximum height */
+}
+
 #chat-input input {
     width:96%;
     position:left;

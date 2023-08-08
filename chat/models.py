@@ -7,7 +7,8 @@ class Message(models.Model):
             related_name='user_message',
             on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    message = models.TextField()
+    message = models.TextField(null=True)
+    image = models.ImageField(null=True)
     
     class Meta:
         ordering = ['-created']
